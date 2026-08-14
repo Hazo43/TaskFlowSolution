@@ -9,5 +9,5 @@
     <Project Path="Infrastructure/Presistence/Presistence.csproj" />
   </Folder>
   <Project Path="Shared/Shared.csproj" />
-  <Project Path="TaskFlow/TaskFlow.csproj" />
+  <Project Path="TaskFlow/TaskFlow.Web.csproj" />
 </Solution>

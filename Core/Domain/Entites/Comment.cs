@@ -13,7 +13,7 @@
 
         #region Relations
 
-        // 1 -> ApplicationUser , m -> Comment
+        // 1 -> User , m -> Comment
         // AuthorId (FK) -> Reference from User
 
         public User Author { get; set; } = default!;
@@ -22,7 +22,7 @@
         // 1 -> Task , m -> Comments
         // TaskId (FK) -> Reference from Task
 
-        public Task Task { get; set; } = default!;
+        public Tasks Task { get; set; } = default!;
         public int TaskId { get; set; }
         
         #endregion

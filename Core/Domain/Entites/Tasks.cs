@@ -3,7 +3,7 @@ using TaskStatus = Domain.Entites.Enums.TaskStatus;
 
 namespace Domain.Entites
 {
-    public class Task : BaseEntity<int>
+    public class Tasks : BaseEntity<int>
     {
 
         public string Title { get; set; } = string.Empty;

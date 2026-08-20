@@ -16,7 +16,7 @@ namespace Domain.Entites
         public ICollection<ProjectMember> ProjectMembers { get; set; } = default!;
 
         // 1 -> User  m -> Task
-        public ICollection<Task> Tasks { get; set; } = new List<Task>();
+        public ICollection<Tasks> Tasks { get; set; } = new List<Tasks>();
 
         // 1 -> User  m -> Task
         public ICollection<Project> Projects { get; set; } = default!;

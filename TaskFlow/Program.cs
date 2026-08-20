@@ -1,4 +1,7 @@
 
+using Microsoft.EntityFrameworkCore;
+using Presistence.Data.DbContexts;
+
 namespace TaskFlow
 {
     public class Program
@@ -9,10 +12,24 @@ namespace TaskFlow
 
             // Add services to the container.
 
+            #region Add services to the container
+
+            
+
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            // TaskFlowDbContext
+            builder.Services.AddDbContext<TaskFlowDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+
+            #endregion
+
 
             var app = builder.Build();
 

@@ -13,7 +13,7 @@ namespace Presistence.Data.Unitofwork
         // 1- key like (project , task , Comment )
         // 2- value like ( GetRepository<Project, int>() )
         private readonly Dictionary<string, object> _repository = [];
-        public UnitOfWork( TaskFlowDbContext dbContext)
+            public UnitOfWork(TaskFlowDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -21,11 +21,11 @@ namespace Presistence.Data.Unitofwork
         public IGenericRepository<TEntity, TKey> GetRepository<TEntity, TKey>() where TEntity : BaseEntity<TKey>
         {
             // "Tasks" , "Project" اللي هيه زي ال TEntity  بنجيب ال
-            var entityType = typeof(TEntity).Name;           
-            
+            var entityType = typeof(TEntity).Name;
+
             // entityType = Projects , Tasks
-           
-   
+
+
 
             if (!_repository.ContainsKey(entityType))  // Objects , Tasks لو مش بيحتوي ع
                                                        // _repository

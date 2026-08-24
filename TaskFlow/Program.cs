@@ -1,4 +1,6 @@
 
+using Domain.Entites;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Presistence.Data.DbContexts;
 
@@ -26,7 +28,10 @@ namespace TaskFlow
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
-
+            // Identity
+            builder.Services.AddIdentityCore<User>()
+                    .AddRoles<IdentityRole<int>>()
+                    .AddEntityFrameworkStores<TaskFlowDbContext>();
 
             #endregion
 

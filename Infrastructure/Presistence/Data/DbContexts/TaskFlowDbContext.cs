@@ -1,9 +1,11 @@
 ﻿using Domain.Entites;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Presistence.Data.DbContexts
 {
-    public class TaskFlowDbContext : DbContext
+    public class TaskFlowDbContext : IdentityDbContext<User, IdentityRole<int> , int>
     {
 
         public TaskFlowDbContext(DbContextOptions<TaskFlowDbContext> options) : base (options)

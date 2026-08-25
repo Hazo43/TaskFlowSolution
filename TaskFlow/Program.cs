@@ -3,6 +3,8 @@ using Domain.Entites;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Presistence.Data.DbContexts;
+using Services.Abstraction.Interfaces;
+using Services.ImplementaionService;
 
 namespace TaskFlow
 {
@@ -32,6 +34,9 @@ namespace TaskFlow
             builder.Services.AddIdentityCore<User>()
                     .AddRoles<IdentityRole<int>>()
                     .AddEntityFrameworkStores<TaskFlowDbContext>();
+
+            // IAuthenticationService 
+            builder.Services.AddScoped(typeof(IAuthenticationService), typeof(AuthenticationService));
 
             #endregion
 

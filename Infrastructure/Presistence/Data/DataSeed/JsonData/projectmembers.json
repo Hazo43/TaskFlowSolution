@@ -1,0 +1,22 @@
+[
+  {
+    "ProjectId": 1,
+    "UserId": 2,
+    "JoinedAt": "2026-01-01T09:00:00"
+  },
+  {
+    "ProjectId": 1,
+    "UserId": 3,
+    "JoinedAt": "2026-01-02T09:00:00"
+  },
+  {
+    "ProjectId": 2,
+    "UserId": 2,
+    "JoinedAt": "2026-01-05T10:00:00"
+  },
+  {
+    "ProjectId": 2,
+    "UserId": 3,
+    "JoinedAt": "2026-01-06T10:00:00"
+  }
+]

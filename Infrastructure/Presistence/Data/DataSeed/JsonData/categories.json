@@ -1,0 +1,18 @@
+[
+  {
+    "Name": "Bug",
+    "Description": "Something is broken"
+  },
+  {
+    "Name": "Feature",
+    "Description": "New feature request"
+  },
+  {
+    "Name": "Enhancement",
+    "Description": "Improvement to existing feature"
+  },
+  {
+    "Name": "Documentation",
+    "Description": "Documentation update"
+  }
+]

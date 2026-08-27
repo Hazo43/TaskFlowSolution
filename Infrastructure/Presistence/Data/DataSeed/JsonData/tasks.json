@@ -1,0 +1,62 @@
+[
+  {
+    "Title": "Setup Project Structure",
+    "Description": "Create solution and configure all layers",
+    "Status": 2,
+    "Priority": 2,
+    "DueDate": "2026-01-10T00:00:00",
+    "ProjectId": 1,
+    "AssignedToId": 2,
+    "CategoryId": 2,
+    "CreatedAt": "2026-01-01T09:00:00",
+    "UpdatedAt": null
+  },
+  {
+    "Title": "Implement Authentication",
+    "Description": "Register, Login and JWT token generation",
+    "Status": 2,
+    "Priority": 3,
+    "DueDate": "2026-01-15T00:00:00",
+    "ProjectId": 1,
+    "AssignedToId": 2,
+    "CategoryId": 2,
+    "CreatedAt": "2026-01-05T09:00:00",
+    "UpdatedAt": null
+  },
+  {
+    "Title": "Fix Login Bug",
+    "Description": "Token expiry not working correctly",
+    "Status": 1,
+    "Priority": 3,
+    "DueDate": "2026-01-20T00:00:00",
+    "ProjectId": 1,
+    "AssignedToId": 3,
+    "CategoryId": 1,
+    "CreatedAt": "2026-01-10T09:00:00",
+    "UpdatedAt": null
+  },
+  {
+    "Title": "Design Mobile UI",
+    "Description": "Create wireframes for mobile screens",
+    "Status": 0,
+    "Priority": 1,
+    "DueDate": "2026-02-01T00:00:00",
+    "ProjectId": 2,
+    "AssignedToId": 3,
+    "CategoryId": 3,
+    "CreatedAt": "2026-01-05T10:00:00",
+    "UpdatedAt": null
+  },
+  {
+    "Title": "Write API Documentation",
+    "Description": "Document all endpoints using Swagger",
+    "Status": 0,
+    "Priority": 1,
+    "DueDate": "2026-02-15T00:00:00",
+    "ProjectId": 1,
+    "AssignedToId": null,
+    "CategoryId": 4,
+    "CreatedAt": "2026-01-15T09:00:00",
+    "UpdatedAt": null
+  }
+]

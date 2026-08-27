@@ -1,7 +1,9 @@
 
 using Domain.Entites;
+using Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Presistence.Data.DataSeed;
 using Presistence.Data.DbContexts;
 using Services.Abstraction.Interfaces;
 using Services.ImplementaionService;
@@ -10,7 +12,7 @@ namespace TaskFlow
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -37,11 +39,19 @@ namespace TaskFlow
 
             // IAuthenticationService 
             builder.Services.AddScoped(typeof(IAuthenticationService), typeof(AuthenticationService));
+            // Data Seeding
+            builder.Services.AddScoped<IDataSeeding, DataSeeding>();
 
             #endregion
 
 
             var app = builder.Build();
+
+            // Add DataSeeding 
+            using var scope = app.Services.CreateScope();
+            var objectOfDataSeeding = scope.ServiceProvider.GetRequiredService<IDataSeeding>();
+            await objectOfDataSeeding.SeedIdentityDataAsync(); // Identity DataSeeding
+            await objectOfDataSeeding.DataSeedAsync(); // Seeding Data
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

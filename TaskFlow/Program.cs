@@ -9,6 +9,8 @@ using Microsoft.OpenApi.Models;
 using Presistence.Data.DataSeed;
 using Presistence.Data.DbContexts;
 using Presistence.Data.Repositories;
+using Presistence.Data.Unitofwork;
+using Services;
 using Services.Abstraction.Interfaces;
 using Services.ImplementaionService;
 using System.Text;
@@ -110,11 +112,14 @@ namespace TaskFlow
 
             // IProjectService
             builder.Services.AddScoped<IProjectService, ProjectService>();
-           
+            // IUnit Of Work
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             // Data Seeding
             builder.Services.AddScoped<IDataSeeding, DataSeeding>();
             //IProjectMemberRepository
             builder.Services.AddScoped<IProjectMemberRepository, ProjectMemberRepository>();
+            // Auto Mapper
+            builder.Services.AddAutoMapper(cfg => { }, typeof(AssembleyReference).Assembly);
 
             #endregion
 

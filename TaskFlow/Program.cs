@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Presistence.Data.DataSeed;
 using Presistence.Data.DbContexts;
+using Presistence.Data.Repositories;
 using Services.Abstraction.Interfaces;
 using Services.ImplementaionService;
 using System.Text;
@@ -100,8 +101,20 @@ namespace TaskFlow
 
             // IAuthenticationService 
             builder.Services.AddScoped(typeof(IAuthenticationService), typeof(AuthenticationService));
+          
+            // token من ال User بتاع ال id عشان نجيب ال
+            builder.Services.AddHttpContextAccessor();
+          
+            // اللي عندو UserId  مين المستخدم الحالي من خلال الservices بيعرف ال class ال
+            builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+            // IProjectService
+            builder.Services.AddScoped<IProjectService, ProjectService>();
+           
             // Data Seeding
             builder.Services.AddScoped<IDataSeeding, DataSeeding>();
+            //IProjectMemberRepository
+            builder.Services.AddScoped<IProjectMemberRepository, ProjectMemberRepository>();
 
             #endregion
 

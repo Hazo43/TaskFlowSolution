@@ -9,5 +9,8 @@ namespace Domain.Interfaces
         Task AddProjectMemberAsync(ProjectMember projectMember);
         void RemoveProjectMember(ProjectMember projectMember);
 
+
+        // ProjectMember  فيها موجود ك userId اللي ال Projects دي ببساطه بتقول هات كل ال
+        Task<IEnumerable<Project>> GetProjectsByUserIdAsync(int userId);
     }
 }

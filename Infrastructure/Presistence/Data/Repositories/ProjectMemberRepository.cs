@@ -32,5 +32,15 @@ namespace Presistence.Data.Repositories
         {
              _dbContext.Remove(projectMember);
         }
+
+        // ProjectMember  فيها موجود ك userId اللي ال Projects دي ببساطه بتقول هات كل ال
+        public async Task<IEnumerable<Project>> GetProjectsByUserIdAsync(int userId)
+        {
+            // UserId == userId اللي ال Project هتجيب كل ال
+             // admin مثلا عندو اكتر من واحد هترجعهم كلهم لي ؟ لانو hazo يعني 
+            return await _dbContext.ProjectMembers.Where(x => x.UserId == userId)
+                                                  .Select(x => x.Project).ToListAsync();
+        }
+
     }
 }

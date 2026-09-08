@@ -158,6 +158,7 @@ namespace Services.ImplementaionService
             return _mapper.Map<ProjectResultDto>(project);
         }
 
+        // Add Member
         public async Task AddMemberAsync(int projectId, int userId)
         {
             // 1-  ؟projec هل ال
@@ -194,6 +195,7 @@ namespace Services.ImplementaionService
 
         }
 
+        // Remove Member
         public async Task RemoveMemberAsync(int projectId, int userId)
         {
             var project = await _unitOfWork.GetRepository<Project, int>().GetByIdAsync(projectId);

@@ -29,5 +29,19 @@ namespace Presistence.Data.Repositories
         public void Update(TEntity entity)
                => _dbContext.Set<TEntity>().Update(entity);
 
+        #region Specification
+
+        public async Task<IEnumerable<TEntity>> GetAllAsync(ISpecifications<TEntity, TKey> specifications)
+        {
+            return await SpecificationsEvaluator.CreateQuery(_dbContext.Set<TEntity>(), specifications).ToListAsync();
+        }
+
+        public async Task<TEntity?> GetByIdAsync(ISpecifications<TEntity, TKey> specifications)
+        {
+            return await SpecificationsEvaluator.CreateQuery(_dbContext.Set<TEntity>(), specifications).FirstOrDefaultAsync();
+        }
+
+        #endregion
+
     }
 }

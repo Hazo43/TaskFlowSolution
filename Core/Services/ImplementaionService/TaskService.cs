@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
 using Domain.Entites;
+using Domain.Entites.Enums;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Services.Abstraction.Interfaces;
 using Services.Specifications;
 using Shared.DTOs;
-using Shared.DTOs.Project;
+using Shared.DTOs.Enums;
 using Shared.DTOs.TaskModule;
-using System.Net.NetworkInformation;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Services.ImplementaionService
 {
@@ -20,15 +19,15 @@ namespace Services.ImplementaionService
         private readonly IProjectMemberRepository _projectMemberRepository;
         private readonly IMapper _mapper;
 
-        public TaskService( IUnitOfWork unitOfWork , UserManager<User> userManager ,
-                          ICurrentUserService currentUserService , IProjectMemberRepository projectMemberRepository , 
+        public TaskService(IUnitOfWork unitOfWork, UserManager<User> userManager,
+                          ICurrentUserService currentUserService, IProjectMemberRepository projectMemberRepository,
                           IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _userManager = userManager;
-           _currentUserService = currentUserService;
+            _currentUserService = currentUserService;
             _projectMemberRepository = projectMemberRepository;
-           _mapper = mapper;
+            _mapper = mapper;
         }
 
         // GET ALL
@@ -117,7 +116,7 @@ namespace Services.ImplementaionService
             {
                 // دا المستخدم اللي انا هخصص ليه التاك
                 assignedUser = await _userManager.FindByIdAsync(createTaskDto.AssignedToId.Value.ToString());
-              
+
                 // هل المستخدم اللي انا عاوز اخصص ليه التاسك دا موجود ولا لا
                 if (assignedUser is null)
                     throw new Exception($"User With Id:{createTaskDto.AssignedToId} Not Found");
@@ -126,10 +125,10 @@ namespace Services.ImplementaionService
                 var isAssignUserMember = await _projectMemberRepository.GetProjectMemberAsync
                                                    (createTaskDto.ProjectId, createTaskDto.AssignedToId.Value);
 
-              //Exception رجع Owner ولا Member اخر حاجه بقولو لو المستخدم اللي انا عاوز اخصص ليه التاسك دا مش 
-                if (isAssignUserMember is null && project.OwnerId != createTaskDto.AssignedToId.Value) 
-                       throw new UnauthorizedAccessException("Assigned User Is Not A Member Of This Project");
-                
+                //Exception رجع Owner ولا Member اخر حاجه بقولو لو المستخدم اللي انا عاوز اخصص ليه التاسك دا مش 
+                if (isAssignUserMember is null && project.OwnerId != createTaskDto.AssignedToId.Value)
+                    throw new UnauthorizedAccessException("Assigned User Is Not A Member Of This Project");
+
             }
 
             // Include عشان بنعمل Navigation Properties عملت دي عشان ال
@@ -143,9 +142,13 @@ namespace Services.ImplementaionService
                                             .GetByIdAsync(createTaskDto.CategoryId.Value);
 
                 // Exception رجعلو null هنشوف لو ب 
-                if (category is null) 
+                if (category is null)
                     throw new Exception($"Category with Id:{createTaskDto.CategoryId} Not Found");
             }
+
+            // Invalid Priority Value اللي مبعوته بيشوف هيه موجود ولا لا لو موجود هيعدي عادي لو مش موجوده Enum دي بتعمل فحص ل قيمه ال
+            if (!Enum.IsDefined(typeof(TaskPriorityDTO), createTaskDto.Priority))
+                throw new Exception($"Invalid Priority Value {createTaskDto.Priority}");
 
             var task = new Tasks()
             {
@@ -159,6 +162,7 @@ namespace Services.ImplementaionService
                 ProjectId = createTaskDto.ProjectId,
                 CategoryId = createTaskDto.CategoryId,
                 AssignedToId = createTaskDto.AssignedToId,
+
                 Priority = (Domain.Entites.Enums.TaskPriority)createTaskDto.Priority,
 
                 // Navigation Properties
@@ -166,7 +170,7 @@ namespace Services.ImplementaionService
                 AssignedTo = assignedUser,
                 Category = category
             };
-         
+
             await _unitOfWork.GetRepository<Tasks, int>().AddAsync(task);
             await _unitOfWork.SaveChangesAsync();
             return _mapper.Map<TaskResultDto>(task);
@@ -174,14 +178,14 @@ namespace Services.ImplementaionService
         }
 
         // UBDATE TASK
-        public async Task<TaskResultDto> UpdateAsync( int taskid ,UpdateTaskDto updateTaskDto)
+        public async Task<TaskResultDto> UpdateAsync(int taskid, UpdateTaskDto updateTaskDto)
         {
             //1] request اللي باعت ال User  بتاع ال Id دا 
             var currentUserId = _currentUserService.UserId;
 
             //2] currentUserId بتاعو دا Id نفسو من ال User بنجيب ال
             var currentUser = await _userManager.FindByIdAsync(currentUserId.ToString());
-            if(currentUser is null)
+            if (currentUser is null)
                 throw new Exception($"User With id{currentUserId} Not found");
 
             //3] دا ولا لا taskid عشان نتاكد هيه موجود ب ال task بنجيب ال
@@ -192,11 +196,11 @@ namespace Services.ImplementaionService
             //4] عليها Check و بنعمل project بنجيب ال
             var project = await _unitOfWork.GetRepository<Project, int>().GetByIdAsync(task.ProjectId);
             if (project is null)
-                throw new Exception($" Project: {project} Not Found");
+                throw new Exception($"Project With Id:{task.ProjectId} Not Found");
 
             // Authorization
             var isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
-        
+
             var isOwner = currentUserId == project.OwnerId;
 
             // اللي متخصصلو التاسك ولا لا AssignedUser دي بنتاكد ان دا نفس ال
@@ -210,7 +214,7 @@ namespace Services.ImplementaionService
             {
                 // وبشوف هو موجود ولا لا Id دا المستخدم اللي انا هخصص ليه التاسك بجبو ب ال
                 var assignedUser = await _userManager.FindByIdAsync(updateTaskDto.AssignedToId.Value.ToString());
-                if(assignedUser is null)
+                if (assignedUser is null)
                     throw new Exception($"User With Id:{updateTaskDto.AssignedToId} Not Found");
 
                 // ولا لا project بشوف الشخص اللي انا هخصص ليه التاسك هو موجود اصلا في ال
@@ -223,7 +227,7 @@ namespace Services.ImplementaionService
             }
 
             // 5] Check CategoryId
-            if(updateTaskDto.CategoryId.HasValue)
+            if (updateTaskDto.CategoryId.HasValue)
             {
                 // اللي هو باعتو و بشوف هو موجود ولا لا الاول CategoryId باخد ال
                 var category = await _unitOfWork.GetRepository<Category, int>().GetByIdAsync(updateTaskDto.CategoryId.Value);
@@ -231,12 +235,18 @@ namespace Services.ImplementaionService
                     throw new Exception($" Category With Id:{updateTaskDto.CategoryId} Not Found");
             }
 
+
+            // Invalid Priority Value اللي مبعوته بيشوف هيه موجود ولا لا لو موجود هيعدي عادي لو مش موجوده Enum دي بتعمل فحص ل قيمه ال
+            if (!Enum.IsDefined(typeof(TaskPriorityDTO), updateTaskDto.Priority))
+                throw new Exception($"Invalid Priority Valu{updateTaskDto.Priority}");
+
             task.Title = updateTaskDto.Title;
             task.Description = updateTaskDto.Description;
             task.DueDate = updateTaskDto.DueDate;
             task.AssignedToId = updateTaskDto.AssignedToId;
             task.CategoryId = updateTaskDto.CategoryId;
             task.UpdatedAt = DateTime.UtcNow;
+
             task.Priority = (Domain.Entites.Enums.TaskPriority)updateTaskDto.Priority;
 
             await _unitOfWork.SaveChangesAsync();
@@ -265,8 +275,11 @@ namespace Services.ImplementaionService
 
             if (!isAdmin && !isAssignedUser && !isOwner)
                 throw new UnauthorizedAccessException("Only Admin, Project Owner Or Assigned User Can Update Task Status");
-            
 
+            // Invalid Status Value اللي مبعوته بيشوف هيه موجود ولا لا لو موجود هيعدي عادي لو مش موجوده Enum دي بتعمل فحص ل قيمه ال
+            if (!Enum.IsDefined(typeof(TaskStatusDTO), updateTaskStatusDto.Status))
+                throw new Exception($"Invalid Status Value {updateTaskStatusDto.Status}");
+           
             task.Status = (Domain.Entites.Enums.TaskStatus)updateTaskStatusDto.Status;
             task.UpdatedAt = DateTime.UtcNow;
 
@@ -303,7 +316,7 @@ namespace Services.ImplementaionService
             await _unitOfWork.SaveChangesAsync();
 
 
-            
+
         }
 
     }

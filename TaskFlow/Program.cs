@@ -120,6 +120,8 @@ namespace TaskFlow
             builder.Services.AddScoped<IProjectMemberRepository, ProjectMemberRepository>();
             // Auto Mapper
             builder.Services.AddAutoMapper(cfg => { }, typeof(AssembleyReference).Assembly);
+            // ITask Service
+            builder.Services.AddScoped<ITaskService, TaskService>();
 
             #endregion
 

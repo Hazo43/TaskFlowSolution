@@ -51,9 +51,9 @@ namespace Presentation.Controllers
         // PUT : BaseUrl/api/Tasks/{id}
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<TaskResultDto>> UpdateTask(int taskId, UpdateTaskDto updateTaskDto)
+        public async Task<ActionResult<TaskResultDto>> UpdateTask(int id, UpdateTaskDto updateTaskDto)
         {
-            var task = await _taskService.UpdateAsync(taskId, updateTaskDto);
+            var task = await _taskService.UpdateAsync(id, updateTaskDto);
             return Ok(task);
         }
 

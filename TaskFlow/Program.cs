@@ -122,6 +122,8 @@ namespace TaskFlow
             builder.Services.AddAutoMapper(cfg => { }, typeof(AssembleyReference).Assembly);
             // ITask Service
             builder.Services.AddScoped<ITaskService, TaskService>();
+            // IComment Service
+            builder.Services.AddScoped(typeof(ICommentService), typeof(CommentService));
 
             #endregion
 

@@ -1,4 +1,5 @@
-﻿using Shared.Errors;
+﻿using Domain.Exceptions;
+using Shared.Errors;
 using System.Text.Json;
 
 namespace TaskFlow.Web.Middlewares
@@ -30,17 +31,21 @@ namespace TaskFlow.Web.Middlewares
             catch (Exception ex)
             {
 
-                _logger.LogError(ex.Message, " Something went Wrong  ");
+                _logger.LogError(ex, " Something went Wrong  ");
 
                 // Change Status Code
-                httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                httpContext.Response.StatusCode = ex switch
+                {
+                    NotFoundExceptions => StatusCodes.Status404NotFound,
+                    _ => StatusCodes.Status500InternalServerError
+                };
                 // Change Content Type
                 httpContext.Response.ContentType = "application/json";
 
                 // Write Response Type
                 var response = new ErrorDetails()
                 {
-                    StatusCode = StatusCodes.Status500InternalServerError,
+                    StatusCode = httpContext.Response.StatusCode,
                     Message = ex.Message
                 };
 

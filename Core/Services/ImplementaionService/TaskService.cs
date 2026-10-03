@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Domain.Entites;
 using Domain.Entites.Enums;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Services.Abstraction.Interfaces;
@@ -63,7 +64,7 @@ namespace Services.ImplementaionService
             var spec = new TaskWithCategoryAndProjectAndAssignedSpecifications(id);
             var task = await _unitOfWork.GetRepository<Tasks, int>().GetByIdAsync(spec);
             if (task is null)
-                throw new Exception($"Task With Id:{id} Is Null");
+                throw new TaskNotFoundException(id);
 
             var currentUserId = _currentUserService.UserId;
             var currentUser = await _userManager.FindByIdAsync(currentUserId.ToString());

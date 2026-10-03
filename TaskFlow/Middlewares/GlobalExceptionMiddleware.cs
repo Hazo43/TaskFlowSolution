@@ -25,7 +25,18 @@ namespace TaskFlow.Web.Middlewares
 
                 await _next.Invoke(httpContext); // Go to the Next Middleware 
 
+                //catch مش موجود غير كدا هيخش ال Url فقط يعني لو طلب response هيخش هنا لو فيه مشكله ف
                 // Take an Action With the Response
+                if (httpContext.Response.StatusCode == StatusCodes.Status404NotFound)
+                {
+                    httpContext.Response.ContentType = "application/json";
+                    var response = new ErrorDetails()
+                    {
+                        StatusCode = StatusCodes.Status404NotFound,
+                        Message = $"The Endpoint With Url:{httpContext.Request.Path} Not Found"
+                    };
+                    await httpContext.Response.WriteAsJsonAsync(response);
+                }
 
             }
             catch (Exception ex)

@@ -129,6 +129,28 @@ namespace TaskFlow
             // IComment Service
             builder.Services.AddScoped(typeof(ICommentService), typeof(CommentService));
 
+            // Handle Validation Error
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = (actionContext) =>
+                {
+                    var errors = actionContext.ModelState.Where(p => p.Value.Errors.Count() > 0)
+                                              .Select(m => new ValidationError()
+                                              {
+                                                  Field = m.Key, // Entity like ( Tasks , project)
+                                                  Errors = m.Value.Errors.Select(E => E.ErrorMessage)
+                                              });
+                    //------------------------------------------------------- 
+                    var response = new ValidationErrorToReturn()
+                    {
+                        StatusCode = StatusCodes.Status400BadRequest,
+                        Message = "one or more validation Error happend",
+                        ValidationErrors = errors,
+                    };
+                   // ---------------------------------------------- 
+                    return new BadRequestObjectResult(response);
+                };
+            });
 
             #endregion
 

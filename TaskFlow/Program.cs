@@ -1,8 +1,10 @@
 
+using Azure;
 using Domain.Entites;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -13,7 +15,9 @@ using Presistence.Data.Unitofwork;
 using Services;
 using Services.Abstraction.Interfaces;
 using Services.ImplementaionService;
+using Shared.Errors;
 using System.Text;
+using TaskFlow.Web.Middlewares;
 
 namespace TaskFlow
 {
@@ -125,6 +129,7 @@ namespace TaskFlow
             // IComment Service
             builder.Services.AddScoped(typeof(ICommentService), typeof(CommentService));
 
+
             #endregion
 
 
@@ -135,6 +140,9 @@ namespace TaskFlow
             var objectOfDataSeeding = scope.ServiceProvider.GetRequiredService<IDataSeeding>();
             await objectOfDataSeeding.SeedIdentityDataAsync(); // Identity DataSeeding
             await objectOfDataSeeding.DataSeedAsync(); // Seeding Data
+
+            // Exception HandlerMiddleware
+            app.UseMiddleware<GlobalExceptionMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

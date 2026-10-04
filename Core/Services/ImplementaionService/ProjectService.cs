@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Entites;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Services.Abstraction.Interfaces;
@@ -82,7 +83,7 @@ namespace Services.ImplementaionService
             var projectWithId = await _unitOfWork.GetRepository<Project, int>().GetByIdAsync(id);
             // Check is null or no
             if (projectWithId is null)
-                throw new Exception($"Project with id:{id} not found");
+                throw new ProjectNotFoundException(id);
 
 
             //  ولا لاisAdmin او isOwner دي الميثود اللي بنعرف منها هو
@@ -105,7 +106,7 @@ namespace Services.ImplementaionService
             // token اللي جبناه من ال currentUserId من ال currentUser بنجيب ال
             var currentUser = await _userManager.FindByIdAsync(currentUserId.ToString());
             if (currentUser is null)
-                throw new Exception(" Current User Is Null");
+                throw new UserNotFoundException(currentUserId);
 
             // check is Admin or no
             var isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
@@ -130,7 +131,7 @@ namespace Services.ImplementaionService
         {
             var project = await _unitOfWork.GetRepository<Project, int>().GetByIdAsync(id);
             if (project is null)
-                throw new Exception("Project is null");
+                throw new ProjectNotFoundException(id);
 
 
             // Get Current User Id from Token
@@ -140,7 +141,7 @@ namespace Services.ImplementaionService
             var currentUser = await _userManager.FindByIdAsync(currentUserId.ToString());
 
             if (currentUser is null)
-                throw new Exception("Current User Is Null");
+                throw new UserNotFoundException(currentUserId);
 
             // Check if Current User is Admin
             var isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
@@ -151,7 +152,7 @@ namespace Services.ImplementaionService
             // Check if Current User is Project Member
             var isMember = await _projectMemberRepository.GetProjectMemberAsync(id, currentUserId);
 
-            // UnauthorizedAccessException لو هو مش اي حاجه من الثلاثه دول هيرجعلو ال
+            // UnauthorizedException لو هو مش اي حاجه من الثلاثه دول هيرجعلو ال
             if (!isAdmin && !isOwner && isMember is null)
                 throw new UnauthorizedAccessException("Only Admin, Project Owner Or Project Member Can View This Project");
 
@@ -164,12 +165,12 @@ namespace Services.ImplementaionService
             // 1-  ؟projec هل ال
             var projectWithId = await _unitOfWork.GetRepository<Project, int>().GetByIdAsync(projectId);
             if (projectWithId is null)
-                throw new Exception($"Project With Id:{projectId} not found");
+                throw new ProjectNotFoundException(projectId);
 
             //2 -  ؟user هل ال
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user is null)
-                throw new Exception($"User With Id:{userId} not found");
+                throw new UserNotFoundException(userId);
 
             //3- Exception واحد رجعلو ProjectMember موجودين مع بعض في  userId او projectId لو ال
             var memberIsExist = await _projectMemberRepository.GetProjectMemberAsync(projectId, userId);
@@ -200,11 +201,11 @@ namespace Services.ImplementaionService
         {
             var project = await _unitOfWork.GetRepository<Project, int>().GetByIdAsync(projectId);
             if (project is null)
-                throw new Exception($" project with id:{projectId} not found");
+                throw new ProjectNotFoundException(projectId);
 
             var userIsExist = await _userManager.FindByIdAsync(userId.ToString());
             if (userIsExist is null)
-                throw new Exception($" user with id:{userId} not found");
+                throw new UserNotFoundException(userId);
 
             //  ولا لاisAdmin او isOwner دي الميثود اللي بنعرف منها هو
             await EnsureUsAdminOrIsOwner(project);
@@ -229,7 +230,7 @@ namespace Services.ImplementaionService
             var project = await _unitOfWork.GetRepository<Project, int>().GetByIdAsync(id);
 
             if (project is null)
-                throw new Exception($" Project with id:{id} not Found");
+                throw new ProjectNotFoundException(id);
 
 
             //  ولا لاisAdmin او isOwner دي الميثود اللي بنعرف منها هو
@@ -261,7 +262,7 @@ namespace Services.ImplementaionService
             //  ولا لا Null بتجيب الشخص و تشوف هو 
             var currentUser = await _userManager.FindByIdAsync(currentUserId.ToString());
             if (currentUser is null)
-                throw new Exception($"Current User Is Null");
+                throw new UserNotFoundException(currentUserId);
             
             // Check if current user is Admin
             // ولا لا Admin بتشوف اللي عامل الطلب ال

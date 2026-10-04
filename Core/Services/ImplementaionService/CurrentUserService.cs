@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Domain.Exceptions;
+using Microsoft.AspNetCore.Http;
 using Services.Abstraction.Interfaces;
 using System.Security.Claims;
 
@@ -23,7 +24,7 @@ namespace Services.ImplementaionService
                 var userId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
                 if (userId is null)
-                    throw new Exception("User Is is not found in token");
+                    throw new UnauthorizedException("User Id is not found in token");
               
                 // Parse ف عملنا int واحنا عاوزينها string بتكون clim قيمه ال
                 return int.Parse(userId);

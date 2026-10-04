@@ -41,7 +41,7 @@ namespace Services.ImplementaionService
             // نفسو وتعمل فحص عليه User بتجيب ال
             var currentUser = await _userManager.FindByIdAsync(currentUserId.ToString());
             if (currentUser is null)
-                throw new Exception(" Current User Is Null");
+                throw new UserNotFoundException(currentUserId);
 
             // عشان نعمل اتشك isAdmin بنجيب ال
             var isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
@@ -64,12 +64,12 @@ namespace Services.ImplementaionService
             var spec = new TaskWithCategoryAndProjectAndAssignedSpecifications(id);
             var task = await _unitOfWork.GetRepository<Tasks, int>().GetByIdAsync(spec);
             if (task is null)
-                throw new TaskNotFoundException(id);
+                 throw new TaskNotFoundException(id);
 
             var currentUserId = _currentUserService.UserId;
             var currentUser = await _userManager.FindByIdAsync(currentUserId.ToString());
             if (currentUser is null)
-                throw new Exception($" User With Id{currentUserId} Is null");
+                throw new UserNotFoundException(currentUserId);
 
             var isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
 
@@ -89,13 +89,13 @@ namespace Services.ImplementaionService
 
             var currentUser = await _userManager.FindByIdAsync(currentUserId.ToString());
             if (currentUser is null)
-                throw new Exception($"User With id{currentUserId} Not found");
+                throw new UserNotFoundException(currentUserId);
 
             var isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
 
             var project = await _unitOfWork.GetRepository<Project, int>().GetByIdAsync(createTaskDto.ProjectId);
             if (project is null)
-                throw new Exception($" Project With ID:{createTaskDto.ProjectId} Not Found");
+                throw new ProjectNotFoundException(createTaskDto.ProjectId);
 
             // هيخش جوا isAdmin لو هو مش
             if (!isAdmin)
@@ -120,7 +120,7 @@ namespace Services.ImplementaionService
 
                 // هل المستخدم اللي انا عاوز اخصص ليه التاسك دا موجود ولا لا
                 if (assignedUser is null)
-                    throw new Exception($"User With Id:{createTaskDto.AssignedToId} Not Found");
+                    throw new UserNotFoundException(createTaskDto.AssignedToId.Value);
 
                 // في المشروع او ليه علاقه بالمشروع  Member هل المستخدم دا 
                 var isAssignUserMember = await _projectMemberRepository.GetProjectMemberAsync
@@ -187,17 +187,17 @@ namespace Services.ImplementaionService
             //2] currentUserId بتاعو دا Id نفسو من ال User بنجيب ال
             var currentUser = await _userManager.FindByIdAsync(currentUserId.ToString());
             if (currentUser is null)
-                throw new Exception($"User With id{currentUserId} Not found");
+                throw new UserNotFoundException(currentUserId);
 
             //3] دا ولا لا taskid عشان نتاكد هيه موجود ب ال task بنجيب ال
             var task = await _unitOfWork.GetRepository<Tasks, int>().GetByIdAsync(taskid);
             if (task is null)
-                throw new Exception($" Task With Id {taskid} Not Found");
+                throw new TaskNotFoundException(taskid);
 
             //4] عليها Check و بنعمل project بنجيب ال
             var project = await _unitOfWork.GetRepository<Project, int>().GetByIdAsync(task.ProjectId);
             if (project is null)
-                throw new Exception($"Project With Id:{task.ProjectId} Not Found");
+                throw new ProjectNotFoundException(task.ProjectId);
 
             // Authorization
             var isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
@@ -216,7 +216,7 @@ namespace Services.ImplementaionService
                 // وبشوف هو موجود ولا لا Id دا المستخدم اللي انا هخصص ليه التاسك بجبو ب ال
                 var assignedUser = await _userManager.FindByIdAsync(updateTaskDto.AssignedToId.Value.ToString());
                 if (assignedUser is null)
-                    throw new Exception($"User With Id:{updateTaskDto.AssignedToId} Not Found");
+                    throw new UserNotFoundException(updateTaskDto.AssignedToId.Value);
 
                 // ولا لا project بشوف الشخص اللي انا هخصص ليه التاسك هو موجود اصلا في ال
                 var isAssignedUserMember = await _projectMemberRepository.GetProjectMemberAsync
@@ -233,13 +233,13 @@ namespace Services.ImplementaionService
                 // اللي هو باعتو و بشوف هو موجود ولا لا الاول CategoryId باخد ال
                 var category = await _unitOfWork.GetRepository<Category, int>().GetByIdAsync(updateTaskDto.CategoryId.Value);
                 if (category is null)
-                    throw new Exception($" Category With Id:{updateTaskDto.CategoryId} Not Found");
+                    throw new CategoryNotFoundException(updateTaskDto.CategoryId.Value);
             }
 
 
             // Invalid Priority Value اللي مبعوته بيشوف هيه موجود ولا لا لو موجود هيعدي عادي لو مش موجوده Enum دي بتعمل فحص ل قيمه ال
             if (!Enum.IsDefined(typeof(TaskPriorityDTO), updateTaskDto.Priority))
-                throw new Exception($"Invalid Priority Valu{updateTaskDto.Priority}");
+                throw new Exception($"Invalid Priority Value:{updateTaskDto.Priority}");
 
             task.Title = updateTaskDto.Title;
             task.Description = updateTaskDto.Description;
@@ -260,15 +260,15 @@ namespace Services.ImplementaionService
             var currentUserId = _currentUserService.UserId;
             var currentUser = await _userManager.FindByIdAsync(currentUserId.ToString());
             if (currentUser is null)
-                throw new Exception($" User With Id:{currentUserId} Not Found");
+                throw new UserNotFoundException(currentUserId);
 
             var task = await _unitOfWork.GetRepository<Tasks, int>().GetByIdAsync(id);
             if (task is null)
-                throw new Exception($"Task With Id:{id} Not Found");
+                throw new TaskNotFoundException(id);
 
             var project = await _unitOfWork.GetRepository<Project, int>().GetByIdAsync(task.ProjectId);
             if (project is null)
-                throw new Exception($" Project With Id:{task.ProjectId} Not Found");
+                throw new ProjectNotFoundException(task.ProjectId);
 
             var isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
             var isOwner = currentUserId == project.OwnerId;
@@ -296,15 +296,15 @@ namespace Services.ImplementaionService
             var currentUserId = _currentUserService.UserId;
             var currentUser = await _userManager.FindByIdAsync(currentUserId.ToString());
             if (currentUser is null)
-                throw new Exception($" User with id:{currentUserId} not found");
+                throw new UserNotFoundException(currentUserId);
 
             var task = await _unitOfWork.GetRepository<Tasks, int>().GetByIdAsync(id);
             if (task is null)
-                throw new Exception($"Task With Id:{id} Not Found");
+                throw new TaskNotFoundException(id);
 
             var project = await _unitOfWork.GetRepository<Project, int>().GetByIdAsync(task.ProjectId);
             if (project is null)
-                throw new Exception($" Project With id:{task.ProjectId} Not Found");
+                throw new ProjectNotFoundException(task.ProjectId);
 
             var isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
             var isOwner = currentUserId == project.OwnerId;

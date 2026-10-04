@@ -15,7 +15,7 @@ namespace Services.ImplementaionService
     {
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
-        public AuthenticationService(UserManager<User> userManager , IConfiguration configuration)
+        public AuthenticationService(UserManager<User> userManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _configuration = configuration;
@@ -25,10 +25,10 @@ namespace Services.ImplementaionService
         {
             var userEmail = await _userManager.FindByEmailAsync(_loginReDto.Email);
             if (userEmail is null)
-               throw new UnauthorizedException("Invalid email or passord");
+                throw new UnauthorizedException("Invalid email or passord");
 
             var checkPassword = await _userManager.CheckPasswordAsync(userEmail, _loginReDto.Password);
-            if (!checkPassword )
+            if (!checkPassword)
                 throw new UnauthorizedException("Invalid email or passord");
 
             return new UserResultDto(userEmail.DisplayName, await CreateTokenAsync(userEmail), userEmail.Email);
@@ -69,7 +69,7 @@ namespace Services.ImplementaionService
             };
 
             var userRoles = await _userManager.GetRolesAsync(user);
-            foreach(var role in userRoles)
+            foreach (var role in userRoles)
             {
                 authclaims.Add(new Claim(ClaimTypes.Role, role));
             }
@@ -79,11 +79,11 @@ namespace Services.ImplementaionService
 
             var token = new JwtSecurityToken
                 (
-                  audience : _configuration["JWT:Audience"],
-                  issuer : _configuration["JWT:Issuer"],
-                  expires: DateTime.UtcNow.AddDays(double.Parse(_configuration["JWT:ExpirationInDays"] ?? "0" )),
-                  claims : authclaims,
-                  signingCredentials : new SigningCredentials( Key , SecurityAlgorithms.HmacSha256Signature)
+                  audience: _configuration["JWT:Audience"],
+                  issuer: _configuration["JWT:Issuer"],
+                  expires: DateTime.UtcNow.AddDays(double.Parse(_configuration["JWT:ExpirationInDays"] ?? "0")),
+                  claims: authclaims,
+                  signingCredentials: new SigningCredentials(Key, SecurityAlgorithms.HmacSha256Signature)
 
                 );
 

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Entites;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Services.Abstraction.Interfaces;
@@ -33,15 +34,15 @@ namespace Services.ImplementaionService
             var currentUserId = _currentUserService.UserId;
             var currentUser = await _userManager.FindByIdAsync(currentUserId.ToString());
             if (currentUser is null)
-                throw new Exception(" Current User Is Null Or Not Found");
+                throw new UserNotFoundException(currentUserId);
 
             var task = await _unitOfWork.GetRepository<Tasks, int>().GetByIdAsync(taskId);
             if (task is null)
-                throw new Exception($" Task With Id:{taskId} Is null ");
+                throw new TaskNotFoundException(taskId);
 
             var project = await _unitOfWork.GetRepository<Project, int>().GetByIdAsync(task.ProjectId);
             if (project is null)
-                throw new Exception($" Project With Id:{task.ProjectId} Is null");
+                throw new ProjectNotFoundException(task.ProjectId);
 
             // Check if current user is Admin
             var isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
@@ -76,21 +77,22 @@ namespace Services.ImplementaionService
 
             var createComment = await _unitOfWork.GetRepository<Comment, int>().GetByIdAsync(spec);
             if (createComment is null)
-                throw new Exception($" Create Comment With Id:{comment.Id} Not Found");
+                throw new CommentNotFoundException(comment.Id);
 
             return _mapper.Map<CommentResultDTO>(createComment);
         }
 
+        // DELETE COMMENT BY => commentId
         public async Task DeleteComment(int commentId)
         {
             var currentUserId = _currentUserService.UserId;
             var currentUser = await _userManager.FindByIdAsync(currentUserId.ToString());
             if (currentUser is null)
-                throw new Exception($" Current User With Id:{currentUserId} Not Found");
+                throw new UserNotFoundException(currentUserId);
 
             var comment = await _unitOfWork.GetRepository<Comment, int>().GetByIdAsync(commentId);
             if (comment is null)
-                throw new Exception($" Comment With Id:{commentId} Not Found");
+                throw new CommentNotFoundException(commentId);
 
             var isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
 
@@ -114,11 +116,11 @@ namespace Services.ImplementaionService
             // نفسو وتعمل فحص عليه User بتجيب ال
             var currentUser = await _userManager.FindByIdAsync(currentUserId.ToString());
             if (currentUser is null)
-                throw new Exception($" Current User Is Null");
+                throw new UserNotFoundException(currentUserId);
 
             var task = await _unitOfWork.GetRepository<Tasks, int>().GetByIdAsync(taskId);
             if (task is null)
-                throw new Exception($" Task With Id:{taskId} Is Null");
+                throw new TaskNotFoundException(taskId);
 
             var isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
 
@@ -128,7 +130,7 @@ namespace Services.ImplementaionService
                 var project = await _unitOfWork.GetRepository<Project, int>().GetByIdAsync(task.ProjectId);
 
                 if (project is null)
-                    throw new Exception($"Project With Id:{task.ProjectId} Is Null");
+                    throw new ProjectNotFoundException(task.ProjectId);
 
 
                 var isMember = await _projectMemberRepository.GetProjectMemberAsync
@@ -160,12 +162,12 @@ namespace Services.ImplementaionService
         
             var currentUser = await _userManager.FindByIdAsync(currentUserId.ToString());
             if (currentUser is null)
-                throw new Exception($" Cureent User With:{currentUserId} Not Found");
+                throw new UserNotFoundException(currentUserId);
 
 
             var comment = await _unitOfWork.GetRepository<Comment, int>().GetByIdAsync(commentId);
             if (comment is null)
-                throw new Exception($" Comment With Id:{commentId} Not Found");
+                throw new CommentNotFoundException(commentId);
          
 
             var isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
@@ -189,7 +191,7 @@ namespace Services.ImplementaionService
 
             var updateComment = await _unitOfWork.GetRepository<Comment, int>().GetByIdAsync(spec);
             if (updateComment is null)
-                throw new Exception($" Update Comment With Id:{comment.Id} Not Found");
+                throw new CommentNotFoundException(comment.Id);
 
             return _mapper.Map<CommentResultDTO>(updateComment);
         }

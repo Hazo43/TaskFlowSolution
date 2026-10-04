@@ -239,7 +239,7 @@ namespace Services.ImplementaionService
 
             // Invalid Priority Value اللي مبعوته بيشوف هيه موجود ولا لا لو موجود هيعدي عادي لو مش موجوده Enum دي بتعمل فحص ل قيمه ال
             if (!Enum.IsDefined(typeof(TaskPriorityDTO), updateTaskDto.Priority))
-                throw new Exception($"Invalid Priority Value:{updateTaskDto.Priority}");
+                throw new BadRequestException($"Invalid Priority Value:{updateTaskDto.Priority}");
 
             task.Title = updateTaskDto.Title;
             task.Description = updateTaskDto.Description;
@@ -279,7 +279,7 @@ namespace Services.ImplementaionService
 
             // Invalid Status Value اللي مبعوته بيشوف هيه موجود ولا لا لو موجود هيعدي عادي لو مش موجوده Enum دي بتعمل فحص ل قيمه ال
             if (!Enum.IsDefined(typeof(TaskStatusDTO), updateTaskStatusDto.Status))
-                throw new Exception($"Invalid Status Value {updateTaskStatusDto.Status}");
+                throw new BadRequestException($"Invalid Status Value {updateTaskStatusDto.Status}");
            
             task.Status = (Domain.Entites.Enums.TaskStatus)updateTaskStatusDto.Status;
             task.UpdatedAt = DateTime.UtcNow;

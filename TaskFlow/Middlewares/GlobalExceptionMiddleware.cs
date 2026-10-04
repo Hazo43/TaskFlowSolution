@@ -50,6 +50,7 @@ namespace TaskFlow.Web.Middlewares
                     NotFoundExceptions => StatusCodes.Status404NotFound,
                     UnauthorizedException => StatusCodes.Status401Unauthorized,
                     ForbiddenException => StatusCodes.Status403Forbidden,
+                    BadRequestException => StatusCodes.Status400BadRequest,
                     _ => StatusCodes.Status500InternalServerError
                 };
                 // Change Content Type

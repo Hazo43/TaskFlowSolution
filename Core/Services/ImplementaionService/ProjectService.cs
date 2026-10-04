@@ -175,7 +175,7 @@ namespace Services.ImplementaionService
             //3- Exception واحد رجعلو ProjectMember موجودين مع بعض في  userId او projectId لو ال
             var memberIsExist = await _projectMemberRepository.GetProjectMemberAsync(projectId, userId);
             if (memberIsExist is not null)
-                throw new Exception($"User with id:{userId} is already a member of Project with id:{projectId}");
+                throw new BadRequestException($"User with id:{userId} is already a member of Project with id:{projectId}");
 
             //  ولا لاisAdmin او isOwner دي الميثود اللي بنعرف منها هو
             await EnsureUsAdminOrIsOwner(projectWithId);
@@ -216,7 +216,7 @@ namespace Services.ImplementaionService
 
             var memberIsExist = await _projectMemberRepository.GetProjectMemberAsync(projectId, userId);
             if (memberIsExist is null)
-                throw new Exception(" User is not a member of this project");
+                throw new BadRequestException($" User:{userId} is not a member of this project:{projectId}");
 
             _projectMemberRepository.RemoveProjectMember(memberIsExist);
 

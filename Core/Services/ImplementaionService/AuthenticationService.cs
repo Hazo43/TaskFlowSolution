@@ -1,4 +1,5 @@
 ﻿using Domain.Entites;
+using Domain.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -19,19 +20,21 @@ namespace Services.ImplementaionService
             _userManager = userManager;
             _configuration = configuration;
         }
+        // Login
         public async Task<UserResultDto> Login(LoginRequestDto _loginReDto)
         {
             var userEmail = await _userManager.FindByEmailAsync(_loginReDto.Email);
             if (userEmail is null)
-                return null!;
+               throw new UnauthorizedException("Invalid email or passord");
 
             var checkPassword = await _userManager.CheckPasswordAsync(userEmail, _loginReDto.Password);
             if (!checkPassword )
-                return null!;
+                throw new UnauthorizedException("Invalid email or passord");
 
             return new UserResultDto(userEmail.DisplayName, await CreateTokenAsync(userEmail), userEmail.Email);
         }
 
+        // register
         public async Task<UserResultDto> Register(RegisterRequestDto _registerDto)
         {
             var user = new User()
@@ -46,13 +49,13 @@ namespace Services.ImplementaionService
             var resultCreateUser = await _userManager.CreateAsync(user, _registerDto.Password);
 
             if (resultCreateUser.Succeeded == false)
-                return null!;
+                throw new UnauthorizedException($"Created faild"); ;
 
             return new UserResultDto(user.DisplayName, await CreateTokenAsync(user), user.Email);
 
         }
 
-
+        // Token 
         private async Task<string> CreateTokenAsync(User user)
         {
 

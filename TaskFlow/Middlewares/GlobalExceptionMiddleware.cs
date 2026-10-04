@@ -48,6 +48,7 @@ namespace TaskFlow.Web.Middlewares
                 httpContext.Response.StatusCode = ex switch
                 {
                     NotFoundExceptions => StatusCodes.Status404NotFound,
+                    UnauthorizedException => StatusCodes.Status401Unauthorized,
                     _ => StatusCodes.Status500InternalServerError
                 };
                 // Change Content Type

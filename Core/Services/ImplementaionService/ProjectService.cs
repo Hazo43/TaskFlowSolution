@@ -154,7 +154,7 @@ namespace Services.ImplementaionService
 
             // UnauthorizedException لو هو مش اي حاجه من الثلاثه دول هيرجعلو ال
             if (!isAdmin && !isOwner && isMember is null)
-                throw new UnauthorizedAccessException("Only Admin, Project Owner Or Project Member Can View This Project");
+                throw new ForbiddenException("Only Admin, Project Owner Or Project Member Can View This Project");
 
             return _mapper.Map<ProjectResultDto>(project);
         }
@@ -275,7 +275,7 @@ namespace Services.ImplementaionService
 
             // UnauthorizedAccessException هيعدي غير كدا هيرجعلو isAdmin او isOwner لو
             if (!isAdmin && !isOwner)
-                throw new UnauthorizedAccessException("Only Admin Or Project Owner Can Perform This Action");
+                throw new ForbiddenException("Only Admin Or Project Owner Can Perform This Action");
         }
     }
 }

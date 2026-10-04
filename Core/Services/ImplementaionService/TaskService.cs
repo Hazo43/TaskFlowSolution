@@ -77,7 +77,7 @@ namespace Services.ImplementaionService
             var isMember = await _projectMemberRepository.GetProjectMemberAsync(task.ProjectId, currentUserId);
 
             if (!isAdmin && !isOwner && isMember is null)
-                throw new UnauthorizedAccessException("Only Admin, Project Owner Or Project Member Can View This Task");
+                throw new ForbiddenException("Only Admin, Project Owner Or Project Member Can View This Task");
 
             return _mapper.Map<TaskResultDto>(task);
         }
@@ -106,7 +106,7 @@ namespace Services.ImplementaionService
                 // رجعلو Owner ولا isMember لو هو مش
                 // Exception رجعلو null لو ب
                 if (isMember is null && project.OwnerId != currentUserId)
-                    throw new UnauthorizedAccessException($"You are Not a Member Of This Project");
+                    throw new ForbiddenException($"You are Not a Member or Owner Of This Project");
             }
 
             // AssignedTo
@@ -128,7 +128,7 @@ namespace Services.ImplementaionService
 
                 //Exception رجع Owner ولا Member اخر حاجه بقولو لو المستخدم اللي انا عاوز اخصص ليه التاسك دا مش 
                 if (isAssignUserMember is null && project.OwnerId != createTaskDto.AssignedToId.Value)
-                    throw new UnauthorizedAccessException("Assigned User Is Not A Member Of This Project");
+                    throw new ForbiddenException("Assigned User Is Not A Member Of This Project");
 
             }
 
@@ -208,7 +208,7 @@ namespace Services.ImplementaionService
             var isAssignedUser = currentUserId == task.AssignedToId;
 
             if (!isAdmin && !isOwner && !isAssignedUser)
-                throw new UnauthorizedAccessException("Only Admin, Project Owner Or Assigned User Can Update Task ");
+                throw new ForbiddenException("Only Admin, Project Owner Or Assigned User Can Update Task ");
 
             //5] AssignedTo Validation
             if (updateTaskDto.AssignedToId.HasValue)
@@ -224,7 +224,7 @@ namespace Services.ImplementaionService
 
                 // Exception رجعلو  owner or member و لا هو project لو مش موجود ف ال
                 if (isAssignedUserMember is null && project.OwnerId != updateTaskDto.AssignedToId.Value)
-                    throw new UnauthorizedAccessException(" Assigned User Is Not A Member Of This Project ");
+                    throw new ForbiddenException(" Assigned User Is Not A Member Of This Project ");
             }
 
             // 5] Check CategoryId
@@ -275,7 +275,7 @@ namespace Services.ImplementaionService
             var isAssignedUser = currentUserId == task.AssignedToId;
 
             if (!isAdmin && !isAssignedUser && !isOwner)
-                throw new UnauthorizedAccessException("Only Admin, Project Owner Or Assigned User Can Update Task Status");
+                throw new ForbiddenException("Only Admin, Project Owner Or Assigned User Can Update Task Status");
 
             // Invalid Status Value اللي مبعوته بيشوف هيه موجود ولا لا لو موجود هيعدي عادي لو مش موجوده Enum دي بتعمل فحص ل قيمه ال
             if (!Enum.IsDefined(typeof(TaskStatusDTO), updateTaskStatusDto.Status))
@@ -310,7 +310,7 @@ namespace Services.ImplementaionService
             var isOwner = currentUserId == project.OwnerId;
 
             if (!isAdmin && !isOwner)
-                throw new UnauthorizedAccessException(" Only Admin Or Owner Can Delete Tasks");
+                throw new ForbiddenException(" Only Admin Or Owner Can Delete Tasks");
 
             _unitOfWork.GetRepository<Tasks, int>().Remove(task);
 

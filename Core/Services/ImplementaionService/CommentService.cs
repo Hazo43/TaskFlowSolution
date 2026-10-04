@@ -55,7 +55,7 @@ namespace Services.ImplementaionService
                 var isMember = await _projectMemberRepository.GetProjectMemberAsync(task.ProjectId, currentUserId);
 
                 if (isMember is null && project.OwnerId != currentUserId)
-                    throw new UnauthorizedAccessException($"You are Not a Member Of This Project");
+                    throw new ForbiddenException($"You are Not a Member Of This Project");
             }
 
             // بقا create نعمل
@@ -100,7 +100,7 @@ namespace Services.ImplementaionService
          
             // // Only Admin or Comment Author can Delete
             if (!isAdmin && !isAuthor)
-                throw new UnauthorizedAccessException($" Only Admin or Comment Author can delete");
+                throw new ForbiddenException($" Only Admin or Comment Author can delete");
 
             _unitOfWork.GetRepository<Comment, int>().Remove(comment);
 
@@ -138,7 +138,7 @@ namespace Services.ImplementaionService
 
 
                 if (isMember is null && project.OwnerId != currentUserId)
-                    throw new UnauthorizedAccessException("You are Not a Member Of This Project");
+                    throw new ForbiddenException("You are Not a Member Of This Project");
                 
             }
 
@@ -176,7 +176,7 @@ namespace Services.ImplementaionService
 
             // // Only Admin or Comment Author can Update
             if (!isAdmin && !isAuthor)
-                throw new UnauthorizedAccessException($" Only Admin or Comment Author can update");
+                throw new ForbiddenException($" Only Admin or Comment Author can update");
 
             // update نعمل بقا ال
             comment.Content = updateCommentDTO.Content;
